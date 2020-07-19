@@ -1,6 +1,8 @@
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>
 #include "../include/Window/Window.hpp"
+#include "stb_image/read.h"
+#include "stb_image/write.h"
 
 extern "C++" {
 
@@ -9,15 +11,18 @@ extern "C++" {
         namespace priv { unsigned int shaderProgram; }
 
         Window::Window(const unsigned int &width, const unsigned int &height, const char * const &title) :
-                camera(nullptr) {
+                camera(nullptr), cursor(nullptr) {
             this->data = (void *)(glfwCreateWindow(int(width), int(height), title, nullptr, nullptr));
             if (this->data == nullptr) throw error("Cannot create window");
             glfwMakeContextCurrent((GLFWwindow *)this->data);
+            glfwSetWindowUserPointer((GLFWwindow *)this->data, (void *)this);
             static bool is_first_time = false;
             if (!is_first_time) {
-
                 if (gladLoadGLLoader((GLADloadproc)glfwGetProcAddress) == 0)
                     throw error("Cannot load OpenGL functions");
+
+                stbi_set_flip_vertically_on_load(1);
+                stbi_flip_vertically_on_write(1);
 
                 int success;
 
@@ -97,6 +102,27 @@ extern "C++" {
 
         void Window::setView(View &view) {
             this->camera = &view;
+        }
+
+        void Window::setCursor(Cursor &cursor) {
+            this->cursor = &cursor;
+            glfwSetCursor((GLFWwindow *)this->data, (GLFWcursor *)this->cursor->data);
+        }
+
+        void Window::setCursorMode(const Cursor::Mode &mode) {
+            glfwSetInputMode((GLFWwindow *)this->data, GLFW_CURSOR,
+                    mode == Cursor::Normal ? GLFW_CURSOR_NORMAL :
+                    (mode == Cursor::Hidden ? GLFW_CURSOR_HIDDEN : GLFW_CURSOR_DISABLED));
+        }
+
+        void Window::setCursorPos(const glm::vec3 &pos) {
+            glfwSetCursorPos((GLFWwindow *)this->data, double(pos.x), double(pos.y));
+        }
+
+        glm::vec2 Window::getCursorPos() {
+            double x, y;
+            glfwGetCursorPos((GLFWwindow *)this->data, &x, &y);
+            return { float(x), float(y) };
         }
 
         bool Window::isOpen() { return !glfwWindowShouldClose((GLFWwindow *)this->data); }

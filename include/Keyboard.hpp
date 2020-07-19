@@ -65,6 +65,12 @@ extern "C++" {
 
             };
 
+            enum class KeyType {
+                Pressed,
+                Released,
+                Repeated
+            };
+
             bool isKeyPressed(const Key &key);
 
         }

@@ -22,7 +22,20 @@ extern "C++" {
                 Front, Back
             };
 
+            enum class SightIgnore {
+                X = 1u << 0u,
+                Y = 1u << 1u,
+                Z = 1u << 2u,
+                XY = X | Y,
+                XZ = X | Z,
+                YZ = Y | Z,
+                All = X | Y | Z,
+                None = 0u
+            };
+
             void move(const Motion &motion, int times = 1) noexcept;
+
+            void moveToSight(const Motion &motion, const SightIgnore &mask = SightIgnore::None);
 
             const glm::mat4x4& getViewMatrix() const noexcept;
 
@@ -40,6 +53,8 @@ extern "C++" {
 
             void rotateRoll(float angle);
 
+            void zoom(const float &fov);
+
         private:
 
 #ifdef GLCXX_WINDOW
@@ -48,7 +63,7 @@ extern "C++" {
             /* only for class Window */
             void flush() noexcept;
 
-            float speed, yaw, pitch, roll;
+            float speed, yaw, pitch, roll, fov, aspect, nearPlane, farPlane;
 
             glm::vec3 position, direction, up;
 
@@ -62,6 +77,12 @@ extern "C++" {
         using Camera = View;
 
     }
+
+    gl::View::SightIgnore operator | (const gl::View::SightIgnore &l, const gl::View::SightIgnore &r);
+
+    gl::View::SightIgnore operator & (const gl::View::SightIgnore &l, const gl::View::SightIgnore &r);
+
+    gl::View::SightIgnore operator ^ (const gl::View::SightIgnore &l, const gl::View::SightIgnore &r);
 
 }
 
