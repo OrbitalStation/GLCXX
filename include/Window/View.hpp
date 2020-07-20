@@ -30,6 +30,7 @@ extern "C++" {
                 XZ = X | Z,
                 YZ = Y | Z,
                 All = X | Y | Z,
+                XYZ = All,
                 None = 0u
             };
 

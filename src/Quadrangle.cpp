@@ -79,6 +79,7 @@ extern "C++" {
 
         void Quadrangle::draw() const noexcept {
             this->flush();
+            glBindVertexArray(this->vao);
             glUniformMatrix4fv(glGetUniformLocation(priv::shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(this->model));
             glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
         }

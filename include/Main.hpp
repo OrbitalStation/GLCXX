@@ -7,8 +7,10 @@ extern "C++" {
 
     namespace gl {
 
+        /* Initialize the GLCXX library */
         void init();
 
+        /* Terminate the GLCXX library */
         void terminate();
 
         double getTime();

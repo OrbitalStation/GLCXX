@@ -1,5 +1,6 @@
 #include "../include/Low.hpp"
 #include "../include/Window/Window.hpp"
+#include "../include/Window/Monitor.hpp"
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>
 
@@ -50,6 +51,23 @@ extern "C++" {
                     (*cb)(*((Window *)glfwGetWindowUserPointer(w)), priv::glfwToGL(key), scancode,
                             (action == GLFW_PRESS ? Keyboard::KeyType::Pressed : (action == GLFW_RELEASE ?
                             Keyboard::KeyType::Released : Keyboard::KeyType::Repeated)));
+                });
+            }
+
+            void setMonitorCallback(const MonitorCallback &callback) {
+                priv::temp = (void *)callback;
+                glfwSetMonitorCallback([](GLFWmonitor *m, int event) {
+                    static auto cb = (MonitorCallback)priv::temp;
+                    Monitor monitor(m);
+                    (*cb)(monitor, event == GLFW_CONNECTED);
+                });
+            }
+
+            void setWindowCloseCallback(const Window &window, const WindowCloseCallback &callback) {
+                priv::temp = (void *)callback;
+                glfwSetWindowCloseCallback((GLFWwindow *)window.data, [](GLFWwindow *w) {
+                    static auto cb = (WindowCloseCallback)priv::temp;
+                    (*cb)(*((Window *)glfwGetWindowUserPointer(w)));
                 });
             }
 

@@ -9,6 +9,8 @@ extern "C++" {
 
         class Window;
 
+        class Monitor;
+
         namespace low {
 
             void viewport(const int &x, const int &y, const int &width, const int &height);
@@ -29,6 +31,14 @@ extern "C++" {
                     const Keyboard::KeyType &type);
 
             void setKeyCallback(const Window &window, const KeyCallback &callback);
+
+            typedef void (*MonitorCallback)(Monitor &monitor, const bool &connected);
+
+            void setMonitorCallback(const MonitorCallback &callback);
+
+            typedef void(*WindowCloseCallback)(Window &window);
+
+            void setWindowCloseCallback(const Window &window, const WindowCloseCallback &callback);
 
         }
 

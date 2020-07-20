@@ -6,6 +6,7 @@
 #include "Cursor.hpp"
 #include "Event.hpp"
 #include "View.hpp"
+#include "Monitor.hpp"
 
 extern "C++" {
 
@@ -15,7 +16,14 @@ extern "C++" {
 
         public:
 
-            Window(const unsigned int &width, const unsigned int &height, const char * const &title);
+            enum Style {
+                Fullscreen,
+                NotResizeable,
+                NotDecorated,
+                Default
+            };
+
+            Window(const VideoMode &vm, const char * const &title, const Style &style = Default);
 
             void setView(View &view);
 
@@ -41,13 +49,22 @@ extern "C++" {
 
             void draw(Drawable &drawable);
 
+            void setIcon(const Image &image);
+
+            void resetIcon();
+
+            void iconify();
+
         private:
+
+            static void loadAndConfigureOpenGL();
 
 #ifdef GLCXX_LOW
             friend void low::setCursorMoveCallback(const Window &, const low::CursorMoveCallback &);
             friend void low::setWindowResizeCallback(const Window &, const low::WindowResizeCallback &);
             friend void low::setMouseWheelScrollCallback(const Window &, const low::MouseWheelScroll &);
             friend void low::setKeyCallback(const Window &, const low::KeyCallback &);
+            friend void low::setWindowCloseCallback(const Window &, const low::WindowCloseCallback &);
 #endif
 
             void *data;
